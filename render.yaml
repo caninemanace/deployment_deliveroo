@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: flask-backend
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn "server.app:create_app()"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: DATABASE_URL
+        value: your-render-db-url
+    buildFilter:
+      paths:
+        - server/**/*
+        - requirements.txt
