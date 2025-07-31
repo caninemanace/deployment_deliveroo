@@ -155,7 +155,7 @@
 
 
 from flask import jsonify
-from server.models import db, Parcel, Location, User
+from server.models import db, Parcel, Location, User, Courier
 from utils.email import send_status_update_email
 import uuid
 import traceback 
@@ -379,7 +379,7 @@ class ParcelController:
     def _geocode_address(self, address):
         try:
             API_KEY = 'AIzaSyC1CNPsIUL6W_lAR2LN-Hs7C6QicDjBdqo'
-  # Replace with your key
+  
             response = requests.get(f'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={API_KEY}')
             res_json = response.json()
             if res_json['status'] == 'OK':
@@ -388,3 +388,10 @@ class ParcelController:
         except Exception as e:
             print(f'Geocoding failed for "{address}":', e)
         return None
+    
+    def assign_courier(self, parcel_id, courier_id):
+        parcel = Parcel.query.get_or_404(parcel_id)
+        courier = Courier.query.get_or_404(courier_id)
+        parcel.courier_id = courier.id
+        db.session.commit()
+        return jsonify({'message': f'Courier {courier.id} assigned to parcel {parcel.id}'})

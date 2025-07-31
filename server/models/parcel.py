@@ -1,7 +1,10 @@
+# parcel.py
 from datetime import datetime
-from . import db
+from server.models import db
 
 class Parcel(db.Model):
+    __tablename__ = 'parcels'
+
     id = db.Column(db.Integer, primary_key=True)
     tracking_number = db.Column(db.String(50), unique=True, nullable=False)
     sender_name = db.Column(db.String(100), nullable=False)
@@ -16,16 +19,18 @@ class Parcel(db.Model):
     current_lng = db.Column(db.Float)
     weight = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String(20), default='pending')  # pending, picked_up, in_transit, delivered, cancelled
+    status = db.Column(db.String(20), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # Foreign keys
+
+    courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    
+
     # Relationships
+    courier = db.relationship('Courier', back_populates='parcels')
+    owner = db.relationship('User', back_populates='parcels')
     locations = db.relationship('Location', backref='parcel', lazy=True, cascade='all, delete-orphan')
-    
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -45,5 +50,12 @@ class Parcel(db.Model):
             'userId': self.user_id,
             'timeline': [location.to_dict() for location in self.locations],
             'canUpdate': self.status == 'pending',
-   
+            'courier': {
+                'id': self.courier.id,
+                'name': self.courier.name,
+                'phone': self.courier.phone,
+                'vehicleType': self.courier.vehicle_type,
+                'licenseNumber': self.courier.license_number,
+                'status': self.courier.status
+            } if self.courier else None,
         }

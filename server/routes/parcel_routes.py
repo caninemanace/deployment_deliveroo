@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from controllers.parcel_controller import ParcelController
 
+
 parcel_bp = Blueprint('parcels', __name__)
 parcel_controller = ParcelController()
 

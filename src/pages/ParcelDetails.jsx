@@ -34,12 +34,10 @@ function ParcelDetails() {
   }
 
   const handleEdit = () => {
-    // Check if parcel can still be updated
     if (!parcel.canUpdate || parcel.status === 'delivered' || parcel.status === 'cancelled') {
       alert('This parcel cannot be edited anymore');
       return;
     }
-    
     setEditData({
       destinationAddress: parcel.destinationAddress,
       receiverName: parcel.receiverName,
@@ -59,12 +57,10 @@ function ParcelDetails() {
   };
 
   const handleCancel = () => {
-    // Check if parcel can be cancelled
     if (parcel.status === 'delivered') {
       alert('Cannot cancel delivered parcels');
       return;
     }
-    
     if (window.confirm('Are you sure you want to cancel this parcel?')) {
       dispatch(cancelParcel(parcel.id)).then(() => {
         dispatch(addNotification({
@@ -76,12 +72,8 @@ function ParcelDetails() {
     }
   };
   const canEdit = parcel.canUpdate && !['delivered', 'cancelled'].includes(parcel.status.toLowerCase());
-
-  // const canEdit = parcel.canUpdate && parcel.status.toLowerCase() === 'pending';
-  console.log('canEdit:', canEdit, 'status:', parcel.status, 'canUpdate:', parcel.canUpdate);
-
   const canCancel = parcel.status !== 'delivered' && parcel.status !== 'cancelled';
-
+   console.log('Parcel:', parcel);
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center mb-6">
@@ -162,14 +154,15 @@ function ParcelDetails() {
                       </div>
                     </div>
                   )}
-                  
-                  {parcel.courierAssigned && (
-                    <div className="flex items-center space-x-3">
-                      <User className="h-5 w-5 text-gray-400" />
+
+                  {/* Assigned Courier Info */}
+                  {parcel.courier && (
+                    <div className="flex items-center space-x-3 mt-2">
+                      <User className="h-5 w-5 text-blue-500" />
                       <div>
-                        <p className="text-sm text-gray-500">Assigned Courier</p>
-                        <p className="font-medium">{parcel.courierAssigned.name}</p>
-                        <p className="text-sm text-gray-500">{parcel.courierAssigned.phone}</p>
+                        <p className="text-sm text-gray-500 font-semibold">Assigned Courier</p>
+                        <p className="font-medium">{parcel.courier.name}</p>
+                        <p className="text-sm text-gray-500">{parcel.courier.phone}</p>
                       </div>
                     </div>
                   )}
@@ -226,22 +219,22 @@ function ParcelDetails() {
                   ) : (
                     <>
                       {canEdit && (
-                      <button
-                        onClick={handleEdit}
-                        className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                      >
-                        <Edit className="h-4 w-4" />
-                        <span>Edit</span>
-                      </button>
+                        <button
+                          onClick={handleEdit}
+                          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          <Edit className="h-4 w-4" />
+                          <span>Edit</span>
+                        </button>
                       )}
                       {canCancel && (
-                      <button
-                        onClick={handleCancel}
-                        className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span>Cancel</span>
-                      </button>
+                        <button
+                          onClick={handleCancel}
+                          className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span>Cancel</span>
+                        </button>
                       )}
                     </>
                   )}
@@ -268,7 +261,7 @@ function ParcelDetails() {
           <div className="mt-8">
             <h2 className="text-xl font-semibold mb-4">Delivery Timeline</h2>
             <div className="space-y-4">
-              {parcel.timeline.map((event, index) => (
+              {parcel.timeline && parcel.timeline.map((event, index) => (
                 <div key={index} className="flex items-start space-x-4">
                   <div className="flex-shrink-0 w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
                     <Calendar className="h-4 w-4 text-emerald-600" />

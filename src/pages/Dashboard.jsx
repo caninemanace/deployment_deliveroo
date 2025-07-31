@@ -13,6 +13,7 @@ import PaymentMockup from '../components/PaymentMockup';
 import SavedAddresses from '../components/SavedAddresses';
 import LiveMapView from '../components/LiveMapView';
 import { sortParcels, filterParcels } from '../utils/helpers';
+import CourierDashboard from './CourierDashboard';
 
 function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -23,7 +24,7 @@ function Dashboard() {
   const [sortBy, setSortBy] = useState('newest');
   const [currentStep, setCurrentStep] = useState(1);
   const [calculatedPrice, setCalculatedPrice] = useState(0);
-
+  
   // Map state
   const [showMap, setShowMap] = useState(false);
   const [mapLocations, setMapLocations] = useState({
@@ -47,6 +48,10 @@ function Dashboard() {
   const { parcels, loading, error } = useSelector(state => state.parcels);
   const { user } = useSelector(state => state.user);
   const dispatch = useDispatch();
+
+  if (user && user.role === 'courier') {
+  return <CourierDashboard />;
+}
 
   useEffect(() => {
     dispatch(fetchParcels());

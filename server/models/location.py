@@ -9,7 +9,7 @@ class Location(db.Model):
     longitude = db.Column(db.Float)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     # Foreign keys
-    parcel_id = db.Column(db.Integer, db.ForeignKey('parcel.id'), nullable=False)
+    parcel_id = db.Column(db.Integer, db.ForeignKey('parcels.id'), nullable=False)
     
     def to_dict(self):
         return {

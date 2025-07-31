@@ -100,3 +100,13 @@ def update_parcel_location(parcel_id):
 @admin_required
 def get_analytics():
     return parcel_controller.get_analytics()
+
+@admin_bp.route('/parcels/<int:parcel_id>/assign_courier', methods=['PUT'])
+@jwt_required()
+@admin_required
+def assign_courier(parcel_id):
+    data = request.get_json()
+    courier_id = data.get('courier_id')
+    if not courier_id:
+        return jsonify({'error': 'courier_id is required'}), 400
+    return parcel_controller.assign_courier(parcel_id, courier_id)

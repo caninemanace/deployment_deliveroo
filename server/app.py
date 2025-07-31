@@ -9,7 +9,8 @@ from server.models import db
 from server.routes.auth_routes import auth_bp
 from server.routes.parcel_routes import parcel_bp
 from server.routes.admin_routes import admin_bp
-
+from server.routes.courier_routes import courier_bp
+from server.routes.saved_address_routes import saved_address_bp
 
 migrate = Migrate()
 
@@ -32,6 +33,9 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(parcel_bp, url_prefix='/api/parcels')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(courier_bp, url_prefix='/api/couriers')
+    app.register_blueprint(saved_address_bp, url_prefix='/api')
+
     
     
     @app.errorhandler(404)
